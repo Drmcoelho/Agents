@@ -1,0 +1,1 @@
+Outro documento com conteúdo diferente. Usaremos este arquivo para validar o list_pdfs e o summarize_pdf.
