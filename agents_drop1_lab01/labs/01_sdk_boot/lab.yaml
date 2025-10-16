@@ -1,0 +1,8 @@
+name: lab01_sdk_boot
+steps:
+  - check_env: ["BACKEND", "OFFLINE"]
+  - run_py_offline: "python labs/01_sdk_boot/py/app.py"
+  - run_ts_offline: "node labs/01_sdk_boot/ts/app.js"
+  - verify_outputs: "outputs present and schema valid"
+grading:
+  - pytest: "pytest -q labs/01_sdk_boot/tests"
