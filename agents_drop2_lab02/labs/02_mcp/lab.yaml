@@ -1,0 +1,21 @@
+# labs/02_mcp/lab.yaml
+lab: 02
+title: "Ferramentas & MCP"
+module: mcp
+description: "Construção de um servidor de ferramentas com FastAPI seguindo o Model Context Protocol."
+objectives:
+  - "Implementar um endpoint de descoberta de ferramentas (/tools)."
+  - "Implementar um endpoint de invocação de ferramentas (/invoke)."
+  - "Criar uma ferramenta de calculadora."
+  - "Criar uma ferramenta de análise de texto."
+files:
+  - path: "py/server.py"
+    description: "O arquivo principal do servidor FastAPI a ser implementado."
+  - path: "../../../tests/test_lab02.py"
+    description: "Testes para validar a implementação do servidor."
+hints:
+  - "Comece definindo os modelos Pydantic para as ferramentas e para as requisições."
+  - "Para a calculadora, a função `eval()` do Python pode ser útil, mas tenha cuidado com a segurança em um ambiente de produção."
+  - "O endpoint `/tools` deve retornar uma lista de dicionários, cada um descrevendo uma ferramenta."
+  - "O endpoint `/invoke` deve encontrar a ferramenta pelo nome e chamá-la com os argumentos fornecidos."
+solution: "https://github.com/Drmcoelho/Agents/blob/solutions/lab02/labs/02_mcp/py/server.py"
