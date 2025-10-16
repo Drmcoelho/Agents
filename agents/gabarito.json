@@ -1,0 +1,59 @@
+{
+  "lab1_exercise1": {
+    "description": "Register a tool with the agent",
+    "hints": [
+      "Add the tool to the self.tools dictionary",
+      "Use tool.name as the key",
+      "Store the entire tool object as the value",
+      "Example: self.tools[tool.name] = tool"
+    ],
+    "solution_file": "lab1_react_agent.py",
+    "target_file": "labs/lab1_react_agent.py"
+  },
+  "lab1_exercise2": {
+    "description": "List all registered tool names",
+    "hints": [
+      "Get the keys from self.tools dictionary",
+      "Convert to a list",
+      "Sort alphabetically using sorted()",
+      "Example: return sorted(self.tools.keys())"
+    ],
+    "solution_file": "lab1_react_agent.py",
+    "target_file": "labs/lab1_react_agent.py"
+  },
+  "lab1_exercise3": {
+    "description": "Get tool description by name",
+    "hints": [
+      "Use self.tools.get(tool_name) to safely look up the tool",
+      "If tool exists, return tool.description",
+      "If tool doesn't exist, return None",
+      "Use ternary expression or if/else"
+    ],
+    "solution_file": "lab1_react_agent.py",
+    "target_file": "labs/lab1_react_agent.py"
+  },
+  "lab1_exercise4": {
+    "description": "Execute a tool and track history",
+    "hints": [
+      "First check if tool_name is in self.tools",
+      "Raise ValueError if not found",
+      "Call tool.run(*args, **kwargs) to execute",
+      "Append to self.history with tool name, args, and result",
+      "Return the result"
+    ],
+    "solution_file": "lab1_react_agent.py",
+    "target_file": "labs/lab1_react_agent.py"
+  },
+  "lab1_exercise5": {
+    "description": "Simple reasoning loop",
+    "hints": [
+      "Print the thought with the task",
+      "Check if 'calculator' is in self.tools",
+      "Also check if 'calculate' is in task.lower()",
+      "If both conditions met, execute the calculator tool",
+      "Otherwise return the 'I don't know' message"
+    ],
+    "solution_file": "lab1_react_agent.py",
+    "target_file": "labs/lab1_react_agent.py"
+  }
+}
