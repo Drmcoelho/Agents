@@ -1,0 +1,15 @@
+# Development Dependencies
+pre-commit>=3.6.0
+ipython>=8.18.0
+jupyter>=1.0.0
+notebook>=7.0.0
+
+# Testing Extensions
+pytest-mock>=3.12.0
+pytest-xdist>=3.5.0
+faker>=22.0.0
+
+# Documentation
+mkdocs>=1.5.0
+mkdocs-material>=9.5.0
+mkdocstrings[python]>=0.24.0

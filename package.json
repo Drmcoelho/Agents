@@ -1,0 +1,21 @@
+{
+  "name": "agents-course",
+  "version": "0.1.0",
+  "description": "100% Practical AI Agents Course",
+  "scripts": {
+    "dev": "echo 'Development server placeholder'",
+    "build": "echo 'Build placeholder'",
+    "test": "echo 'Tests placeholder'"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "mcp",
+    "langchain",
+    "education"
+  ],
+  "author": "Agents Course",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

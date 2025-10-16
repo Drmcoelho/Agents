@@ -1,0 +1,44 @@
+{
+  "lab1_exercise1": {
+    "description": "Simple chat completion with OpenAI",
+    "hints": [
+      "Use self.client.chat.completions.create() method",
+      "Pass model parameter as self.model",
+      "Messages should be a list with a dict containing 'role' and 'content'",
+      "Extract the response text from response.choices[0].message.content"
+    ],
+    "solution_file": "lab1_openai.py",
+    "target_file": "labs/lab1_openai.py"
+  },
+  "lab1_exercise2": {
+    "description": "Using system prompts to control behavior",
+    "hints": [
+      "Add two messages: one with role='system' and one with role='user'",
+      "System message comes first in the messages list",
+      "System prompts guide the assistant's behavior and personality"
+    ],
+    "solution_file": "lab1_openai.py",
+    "target_file": "labs/lab1_openai.py"
+  },
+  "lab1_exercise3": {
+    "description": "Implementing streaming responses",
+    "hints": [
+      "Set stream=True in the create() call",
+      "The response is now an iterator/generator",
+      "Each chunk has chunk.choices[0].delta.content",
+      "Check if content is not None before appending"
+    ],
+    "solution_file": "lab1_openai.py",
+    "target_file": "labs/lab1_openai.py"
+  },
+  "lab1_exercise4": {
+    "description": "Controlling temperature for response randomness",
+    "hints": [
+      "Add temperature parameter to create() call",
+      "Temperature 0.0 = deterministic, 1.0+ = creative",
+      "Valid range is 0.0 to 2.0"
+    ],
+    "solution_file": "lab1_openai.py",
+    "target_file": "labs/lab1_openai.py"
+  }
+}
