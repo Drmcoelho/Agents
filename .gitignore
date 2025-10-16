@@ -205,3 +205,16 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Course-specific
+.passport.json
+.eval_results.json
+data/**/*
+!data/README.md
+!data/**/.gitkeep
+*.bak
+
+# Node
+node_modules/
+package-lock.json
+npm-debug.log
