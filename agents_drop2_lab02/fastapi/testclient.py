@@ -1,7 +1,7 @@
 """Minimal test client compatible with the simplified FastAPI stub."""
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Iterable, Mapping, Optional
 
 from . import FastAPI
 from pydantic import BaseModel
@@ -33,11 +33,18 @@ class TestClient:
         return self._build_response("POST", path, json or {})
 
     def _build_response(self, method: str, path: str, payload: Optional[Dict[str, Any]]):
-        result = self.app._handle_request(method, path, payload)
+        status_code, result = self.app._handle_request(method, path, payload)
+        json_payload = self._serialize(result)
+        return Response(status_code, json_payload)
 
-        if isinstance(result, BaseModel):
-            json_payload = result.model_dump()
-        else:
-            json_payload = result
+    def _serialize(self, data: Any) -> Any:
+        if isinstance(data, BaseModel):
+            return data.model_dump()
 
-        return Response(200, json_payload)
+        if isinstance(data, Mapping):
+            return {key: self._serialize(value) for key, value in data.items()}
+
+        if isinstance(data, Iterable) and not isinstance(data, (str, bytes)):
+            return [self._serialize(item) for item in data]
+
+        return data

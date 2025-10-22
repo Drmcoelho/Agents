@@ -10,7 +10,7 @@ from __future__ import annotations
 import asyncio
 import inspect
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, Tuple, get_args, get_origin
 
 
 @dataclass
@@ -18,7 +18,16 @@ class _Route:
     method: str
     path: str
     handler: Callable[..., Any]
-    response_model: Optional[type] = None
+    response_model: Any = None
+
+
+class HTTPException(Exception):
+    """Exception type mimicking :class:`fastapi.HTTPException`."""
+
+    def __init__(self, status_code: int, detail: Any):
+        super().__init__(detail)
+        self.status_code = status_code
+        self.detail = detail
 
 
 class FastAPI:
@@ -29,17 +38,17 @@ class FastAPI:
         self.description = description
         self._routes: Dict[str, Dict[str, _Route]] = {"GET": {}, "POST": {}}
 
-    def _add_route(self, method: str, path: str, func: Callable[..., Any], response_model: Optional[type]):
+    def _add_route(self, method: str, path: str, func: Callable[..., Any], response_model: Any):
         self._routes[method][path] = _Route(method, path, func, response_model)
         return func
 
-    def get(self, path: str, response_model: Optional[type] = None):
+    def get(self, path: str, response_model: Any = None):
         def decorator(func: Callable[..., Any]):
             return self._add_route("GET", path, func, response_model)
 
         return decorator
 
-    def post(self, path: str, response_model: Optional[type] = None):
+    def post(self, path: str, response_model: Any = None):
         def decorator(func: Callable[..., Any]):
             return self._add_route("POST", path, func, response_model)
 
@@ -76,7 +85,32 @@ class FastAPI:
 
         return value
 
-    def _handle_request(self, method: str, path: str, payload: Optional[Dict[str, Any]] = None):
+    def _apply_response_model(self, model: Any, result: Any) -> Any:
+        if model is None:
+            return result
+
+        if hasattr(model, "model_validate"):
+            return model.model_validate(result)
+
+        origin = get_origin(model)
+        if origin in (list, tuple, set):
+            (item_model,) = get_args(model) or (None,)
+            iterable = result or []
+            return type(iterable)(
+                self._apply_response_model(item_model, item) for item in iterable
+            )
+
+        if origin in (dict,):
+            key_model, value_model = get_args(model) or (None, None)
+            return {
+                self._apply_response_model(key_model, key):
+                    self._apply_response_model(value_model, value)
+                for key, value in (result or {}).items()
+            }
+
+        return result
+
+    def _handle_request(self, method: str, path: str, payload: Optional[Dict[str, Any]] = None) -> Tuple[int, Any]:
         if method not in self._routes or path not in self._routes[method]:
             raise ValueError(f"No route registered for {method} {path}")
 
@@ -107,20 +141,36 @@ class FastAPI:
                 if isinstance(argument, dict):
                     kwargs.update(argument)
 
-        if inspect.iscoroutinefunction(handler):
-            result = asyncio.run(handler(*bound_args, **kwargs))
-        else:
-            result = handler(*bound_args, **kwargs)
+        try:
+            if inspect.iscoroutinefunction(handler):
+                coro = handler(*bound_args, **kwargs)
+                try:
+                    loop = asyncio.get_running_loop()
+                except RuntimeError:
+                    result = asyncio.run(coro)
+                else:
+                    if loop.is_running():
+                        new_loop = asyncio.new_event_loop()
+                        try:
+                            result = new_loop.run_until_complete(coro)
+                        finally:
+                            new_loop.close()
+                    else:
+                        result = loop.run_until_complete(coro)
+            else:
+                result = handler(*bound_args, **kwargs)
+        except HTTPException as exc:
+            return exc.status_code, {"detail": exc.detail}
 
-        model = route.response_model
-        if (
-            isinstance(model, type)
-            and hasattr(model, "model_validate")
-            and not isinstance(result, model)
-        ):
-            result = model.model_validate(result)
+        status_code = 200
+        payload = result
 
-        return result
+        if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], int):
+            payload, status_code = result
+
+        payload = self._apply_response_model(route.response_model, payload)
+
+        return status_code, payload
 
 
-__all__ = ["FastAPI"]
+__all__ = ["FastAPI", "HTTPException"]
