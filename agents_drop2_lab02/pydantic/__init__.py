@@ -16,7 +16,7 @@ class BaseModel:
             return data
         return cls(**data)
 
-    def dict(self) -> Dict[str, Any]:
+    def model_dump(self) -> Dict[str, Any]:
         return self.__dict__.copy()
 
     def model_dump(self) -> Dict[str, Any]:
