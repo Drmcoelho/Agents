@@ -36,7 +36,7 @@ class TestClient:
         result = self.app._handle_request(method, path, payload)
 
         if isinstance(result, BaseModel):
-            json_payload = result.dict()
+            json_payload = result.model_dump()
         else:
             json_payload = result
 
